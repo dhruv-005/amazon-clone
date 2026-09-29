@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Amazon Clone</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #f6f6f6; font-family: 'Segoe UI', Arial, sans-serif; }
+    .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .header { background-color: #131921; padding: 20px; text-align: center; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 26px; }
+    .header h1 span { color: #ff9900; }
+    .content { padding: 30px; color: #333333; line-height: 1.6; }
+    .cta-button { display: inline-block; background-color: #ffd814; border: 1px solid #fcd200; border-radius: 8px; color: #0f1111; font-weight: bold; padding: 12px 28px; text-decoration: none; margin-top: 20px; }
+    .cta-button:hover { background-color: #f7ca00; }
+    .footer { background-color: #f3f3f3; padding: 20px; text-align: center; font-size: 12px; color: #777777; border-top: 1px solid #e7e7e7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>amazon<span>clone</span></h1>
+    </div>
+    <div class="content">
+      <h2>Welcome, {{name}}!</h2>
+      <p>Thank you for creating an account on Amazon Clone. We are thrilled to have you join millions of shoppers enjoying unmatched selection, low prices, and reliable fast shipping.</p>
+      <p>Here is what you can do right now:</p>
+      <ul>
+        <li>Discover daily lightning deals and exclusive offers.</li>
+        <li>Manage multiple shipping addresses securely.</li>
+        <li>Create and share wishlists with friends and family.</li>
+      </ul>
+      <div style="text-align: center;">
+        <a href="{{clientUrl}}" class="cta-button">Start Shopping Today</a>
+      </div>
+      <p style="margin-top: 30px; font-size: 14px; color: #555;">If you have any questions, our 24/7 customer support team is always here to assist you.</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2025 Amazon Clone Inc. All rights reserved.</p>
+      <p>This email was sent to an address associated with your Amazon Clone account.</p>
+    </div>
+  </div>
+</body>
+</html>

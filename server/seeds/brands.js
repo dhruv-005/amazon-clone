@@ -1,0 +1,58 @@
+export const seedBrands = [
+  {
+    name: 'Apple',
+    slug: 'apple',
+    description: 'Innovative electronics, software, and online services',
+    logo: 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=200',
+    country: 'United States',
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: 'Samsung',
+    slug: 'samsung',
+    description: 'Smartphones, TVs, home appliances, and memory technology',
+    logo: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=200',
+    country: 'South Korea',
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: 'Sony',
+    slug: 'sony',
+    description: 'Premium audio, cameras, PlayStation gaming, and televisions',
+    logo: 'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=200',
+    country: 'Japan',
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: 'Nike',
+    slug: 'nike',
+    description: 'World-class sportswear, running shoes, and apparel',
+    logo: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200',
+    country: 'United States',
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: 'boAt',
+    slug: 'boat',
+    description: 'Trendy lifestyle audio products, headphones, and smartwatches',
+    logo: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
+    country: 'India',
+    isFeatured: true,
+    isActive: true,
+  },
+  {
+    name: 'Dell',
+    slug: 'dell',
+    description: 'Personal computers, laptops, enterprise servers, and monitors',
+    logo: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=200',
+    country: 'United States',
+    isFeatured: true,
+    isActive: true,
+  },
+];
+
+export default seedBrands;

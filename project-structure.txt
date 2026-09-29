@@ -1,0 +1,600 @@
+.
+├── client
+│   ├── app
+│   │   ├── admin
+│   │   │   ├── banners
+│   │   │   │   └── page.tsx
+│   │   │   ├── categories
+│   │   │   │   └── page.tsx
+│   │   │   ├── coupons
+│   │   │   │   └── page.tsx
+│   │   │   ├── dashboard
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── orders
+│   │   │   │   └── page.tsx
+│   │   │   ├── products
+│   │   │   │   └── page.tsx
+│   │   │   ├── reports
+│   │   │   │   └── page.tsx
+│   │   │   ├── reviews
+│   │   │   │   └── page.tsx
+│   │   │   ├── sellers
+│   │   │   │   └── page.tsx
+│   │   │   ├── settings
+│   │   │   │   └── page.tsx
+│   │   │   └── users
+│   │   │       └── page.tsx
+│   │   ├── api
+│   │   ├── (auth)
+│   │   │   ├── forgot-password
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── login
+│   │   │   │   └── page.tsx
+│   │   │   ├── register
+│   │   │   │   └── page.tsx
+│   │   │   ├── reset-password
+│   │   │   │   └── page.tsx
+│   │   │   └── verify-email
+│   │   │       └── page.tsx
+│   │   ├── error.tsx
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── loading.tsx
+│   │   ├── (main)
+│   │   │   ├── account
+│   │   │   │   ├── addresses
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── notifications
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── payments
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── security
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── settings
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── wishlist
+│   │   │   │       └── page.tsx
+│   │   │   ├── cart
+│   │   │   │   └── page.tsx
+│   │   │   ├── category
+│   │   │   │   └── [slug]
+│   │   │   │       └── page.tsx
+│   │   │   ├── checkout
+│   │   │   │   └── page.tsx
+│   │   │   ├── deals
+│   │   │   │   └── page.tsx
+│   │   │   ├── help
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── orders
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── products
+│   │   │   │   ├── [id]
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── search
+│   │   │   │   └── page.tsx
+│   │   │   ├── seller
+│   │   │   │   ├── analytics
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── dashboard
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── orders
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── payments
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── products
+│   │   │   │   │   ├── add
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── edit
+│   │   │   │   │   │   └── [id]
+│   │   │   │   │   │       └── page.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── reviews
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── settings
+│   │   │   │       └── page.tsx
+│   │   │   └── wishlist
+│   │   │       └── page.tsx
+│   │   └── not-found.tsx
+│   ├── components
+│   │   ├── admin
+│   │   │   ├── AdminHeader.tsx
+│   │   │   ├── AdminSidebar.tsx
+│   │   │   ├── BannerForm.tsx
+│   │   │   ├── CategoryTree.tsx
+│   │   │   ├── CouponForm.tsx
+│   │   │   ├── DashboardStats.tsx
+│   │   │   ├── OrderTable.tsx
+│   │   │   ├── ProductTable.tsx
+│   │   │   ├── RevenueChart.tsx
+│   │   │   ├── SalesChart.tsx
+│   │   │   ├── SellerTable.tsx
+│   │   │   └── UserTable.tsx
+│   │   ├── auth
+│   │   │   ├── AuthLayout.tsx
+│   │   │   ├── ForgotPasswordForm.tsx
+│   │   │   ├── LoginForm.tsx
+│   │   │   ├── OTPInput.tsx
+│   │   │   ├── RegisterForm.tsx
+│   │   │   ├── ResetPasswordForm.tsx
+│   │   │   └── SocialLogin.tsx
+│   │   ├── cart
+│   │   │   ├── CartCoupon.tsx
+│   │   │   ├── CartHeader.tsx
+│   │   │   ├── CartItem.tsx
+│   │   │   ├── CartRecommendations.tsx
+│   │   │   ├── CartSummary.tsx
+│   │   │   ├── EmptyCart.tsx
+│   │   │   └── SaveForLater.tsx
+│   │   ├── checkout
+│   │   │   ├── AddressForm.tsx
+│   │   │   ├── AddressStep.tsx
+│   │   │   ├── CheckoutSteps.tsx
+│   │   │   ├── DeliveryOptions.tsx
+│   │   │   ├── GiftOptions.tsx
+│   │   │   ├── OrderConfirmation.tsx
+│   │   │   ├── OrderSummary.tsx
+│   │   │   ├── PaymentMethods.tsx
+│   │   │   ├── PaymentStep.tsx
+│   │   │   └── ReviewStep.tsx
+│   │   ├── common
+│   │   │   ├── ChatWidget.tsx
+│   │   │   ├── ConfirmDialog.tsx
+│   │   │   ├── DatePicker.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── ImageUploader.tsx
+│   │   │   ├── LoadingScreen.tsx
+│   │   │   ├── NotFound.tsx
+│   │   │   ├── Notification.tsx
+│   │   │   ├── RichTextEditor.tsx
+│   │   │   └── ScrollToTop.tsx
+│   │   ├── filters
+│   │   │   ├── AppliedFilters.tsx
+│   │   │   ├── BrandFilter.tsx
+│   │   │   ├── CategoryFilter.tsx
+│   │   │   ├── ColorFilter.tsx
+│   │   │   ├── FilterSidebar.tsx
+│   │   │   ├── MobileFilters.tsx
+│   │   │   ├── PriceFilter.tsx
+│   │   │   ├── RatingFilter.tsx
+│   │   │   ├── SizeFilter.tsx
+│   │   │   └── SortDropdown.tsx
+│   │   ├── home
+│   │   │   ├── BrandShowcase.tsx
+│   │   │   ├── CategoryCards.tsx
+│   │   │   ├── DealsCarousel.tsx
+│   │   │   ├── HeroBanner.tsx
+│   │   │   ├── PrimeSection.tsx
+│   │   │   ├── RecentlyViewed.tsx
+│   │   │   ├── RecommendedProducts.tsx
+│   │   │   ├── TopSellers.tsx
+│   │   │   └── TrendingProducts.tsx
+│   │   ├── layout
+│   │   │   ├── CartIcon.tsx
+│   │   │   ├── CategoryNav.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── LanguageSelector.tsx
+│   │   │   ├── LocationSelector.tsx
+│   │   │   ├── MegaMenu.tsx
+│   │   │   ├── MobileNav.tsx
+│   │   │   ├── SearchBar.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── TopBar.tsx
+│   │   │   └── UserMenu.tsx
+│   │   ├── order
+│   │   │   ├── CancelOrder.tsx
+│   │   │   ├── OrderCard.tsx
+│   │   │   ├── OrderDetails.tsx
+│   │   │   ├── OrderInvoice.tsx
+│   │   │   ├── OrderStatus.tsx
+│   │   │   ├── OrderTimeline.tsx
+│   │   │   ├── ReturnForm.tsx
+│   │   │   └── TrackingMap.tsx
+│   │   ├── product
+│   │   │   ├── BuyBox.tsx
+│   │   │   ├── DeliveryInfo.tsx
+│   │   │   ├── FrequentlyBoughtTogether.tsx
+│   │   │   ├── OfferSection.tsx
+│   │   │   ├── PriceDisplay.tsx
+│   │   │   ├── ProductBreadcrumb.tsx
+│   │   │   ├── ProductCard.tsx
+│   │   │   ├── ProductDescription.tsx
+│   │   │   ├── ProductGallery.tsx
+│   │   │   ├── ProductGrid.tsx
+│   │   │   ├── ProductInfo.tsx
+│   │   │   ├── ProductList.tsx
+│   │   │   ├── ProductQA.tsx
+│   │   │   ├── ProductReviews.tsx
+│   │   │   ├── ProductSpecs.tsx
+│   │   │   ├── ProductVideos.tsx
+│   │   │   ├── SimilarProducts.tsx
+│   │   │   ├── StockStatus.tsx
+│   │   │   └── VariantSelector.tsx
+│   │   ├── review
+│   │   │   ├── HelpfulVote.tsx
+│   │   │   ├── RatingDistribution.tsx
+│   │   │   ├── ReviewCard.tsx
+│   │   │   ├── ReviewFilters.tsx
+│   │   │   ├── ReviewForm.tsx
+│   │   │   └── ReviewImages.tsx
+│   │   ├── seller
+│   │   │   ├── AnalyticsCards.tsx
+│   │   │   ├── InventoryTable.tsx
+│   │   │   ├── OrderTable.tsx
+│   │   │   ├── ProductForm.tsx
+│   │   │   ├── RecentOrders.tsx
+│   │   │   ├── RevenueChart.tsx
+│   │   │   ├── ReviewsList.tsx
+│   │   │   ├── SellerSidebar.tsx
+│   │   │   ├── SellerStats.tsx
+│   │   │   └── TopProducts.tsx
+│   │   └── ui
+│   │       ├── Accordion.tsx
+│   │       ├── Alert.tsx
+│   │       ├── Avatar.tsx
+│   │       ├── Badge.tsx
+│   │       ├── Breadcrumb.tsx
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       ├── Checkbox.tsx
+│   │       ├── Dropdown.tsx
+│   │       ├── Input.tsx
+│   │       ├── Modal.tsx
+│   │       ├── Pagination.tsx
+│   │       ├── ProgressBar.tsx
+│   │       ├── RadioButton.tsx
+│   │       ├── Rating.tsx
+│   │       ├── Select.tsx
+│   │       ├── Skeleton.tsx
+│   │       ├── Slider.tsx
+│   │       ├── Spinner.tsx
+│   │       ├── Switch.tsx
+│   │       ├── Tabs.tsx
+│   │       ├── Textarea.tsx
+│   │       ├── Toast.tsx
+│   │       └── Tooltip.tsx
+│   ├── hooks
+│   │   ├── useAuth.ts
+│   │   ├── useCart.ts
+│   │   ├── useDebounce.ts
+│   │   ├── useInfiniteScroll.ts
+│   │   ├── useIntersectionObserver.ts
+│   │   ├── useKeyPress.ts
+│   │   ├── useLocalStorage.ts
+│   │   ├── useMediaQuery.ts
+│   │   ├── useNotifications.ts
+│   │   ├── useOnClickOutside.ts
+│   │   ├── useOrders.ts
+│   │   ├── useProducts.ts
+│   │   ├── useSearch.ts
+│   │   ├── useSocket.ts
+│   │   ├── useToast.ts
+│   │   └── useWishlist.ts
+│   ├── lib
+│   │   ├── analytics.ts
+│   │   ├── api.ts
+│   │   ├── axios.ts
+│   │   ├── constants.ts
+│   │   ├── cookies.ts
+│   │   ├── currency.ts
+│   │   ├── date.ts
+│   │   ├── formatters.ts
+│   │   ├── seo.ts
+│   │   ├── utils.ts
+│   │   └── validators.ts
+│   ├── middleware.ts
+│   ├── next.config.js
+│   ├── next-env.d.ts
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public
+│   │   ├── favicon.ico
+│   │   ├── fonts
+│   │   ├── icons
+│   │   ├── images
+│   │   │   ├── banners
+│   │   │   ├── brands
+│   │   │   ├── categories
+│   │   │   ├── logo
+│   │   │   └── products
+│   │   ├── manifest.json
+│   │   ├── robots.txt
+│   │   ├── sitemap.xml
+│   │   └── videos
+│   ├── README.md
+│   ├── store
+│   │   ├── api
+│   │   │   ├── adminApi.ts
+│   │   │   ├── authApi.ts
+│   │   │   ├── baseApi.ts
+│   │   │   ├── cartApi.ts
+│   │   │   ├── orderApi.ts
+│   │   │   ├── productApi.ts
+│   │   │   ├── reviewApi.ts
+│   │   │   ├── searchApi.ts
+│   │   │   ├── sellerApi.ts
+│   │   │   └── userApi.ts
+│   │   ├── hooks.ts
+│   │   ├── provider.tsx
+│   │   ├── slices
+│   │   │   ├── authSlice.ts
+│   │   │   ├── cartSlice.ts
+│   │   │   ├── checkoutSlice.ts
+│   │   │   ├── notificationSlice.ts
+│   │   │   ├── orderSlice.ts
+│   │   │   ├── productSlice.ts
+│   │   │   ├── searchSlice.ts
+│   │   │   ├── uiSlice.ts
+│   │   │   ├── userSlice.ts
+│   │   │   └── wishlistSlice.ts
+│   │   └── store.ts
+│   ├── styles
+│   │   ├── animations.css
+│   │   ├── globals.css
+│   │   └── variables.css
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
+│   └── types
+│       ├── address.ts
+│       ├── api.ts
+│       ├── cart.ts
+│       ├── category.ts
+│       ├── coupon.ts
+│       ├── index.ts
+│       ├── notification.ts
+│       ├── order.ts
+│       ├── payment.ts
+│       ├── product.ts
+│       ├── review.ts
+│       ├── seller.ts
+│       └── user.ts
+├── docker-compose.yml
+├── docs
+│   ├── api
+│   │   ├── authentication.md
+│   │   ├── orders.md
+│   │   ├── products.md
+│   │   └── users.md
+│   ├── architecture
+│   │   ├── api-design.md
+│   │   ├── database-schema.md
+│   │   └── overview.md
+│   ├── CONTRIBUTING.md
+│   ├── deployment
+│   │   ├── mongodb-atlas.md
+│   │   ├── railway.md
+│   │   └── vercel.md
+│   ├── README.md
+│   └── setup
+│       ├── database.md
+│       ├── environment.md
+│       └── installation.md
+├── package.json
+├── project-structure.txt
+├── README.md
+├── server
+│   ├── Dockerfile
+│   ├── docs
+│   ├── logs
+│   ├── nodemon.json
+│   ├── package.json
+│   ├── README.md
+│   ├── seeds
+│   │   ├── banners.js
+│   │   ├── brands.js
+│   │   ├── categories.js
+│   │   ├── coupons.js
+│   │   ├── deals.js
+│   │   ├── index.js
+│   │   ├── orders.js
+│   │   ├── products.js
+│   │   ├── reviews.js
+│   │   └── users.js
+│   ├── src
+│   │   ├── app.js
+│   │   ├── config
+│   │   │   ├── cloudinary.js
+│   │   │   ├── constants.js
+│   │   │   ├── database.js
+│   │   │   ├── email.js
+│   │   │   ├── index.js
+│   │   │   ├── logger.js
+│   │   │   ├── multer.js
+│   │   │   ├── passport.js
+│   │   │   ├── razorpay.js
+│   │   │   ├── redis.js
+│   │   │   ├── socket.js
+│   │   │   └── stripe.js
+│   │   ├── controllers
+│   │   │   ├── addressController.js
+│   │   │   ├── adminController.js
+│   │   │   ├── analyticsController.js
+│   │   │   ├── authController.js
+│   │   │   ├── bannerController.js
+│   │   │   ├── brandController.js
+│   │   │   ├── cartController.js
+│   │   │   ├── categoryController.js
+│   │   │   ├── chatController.js
+│   │   │   ├── couponController.js
+│   │   │   ├── dealController.js
+│   │   │   ├── notificationController.js
+│   │   │   ├── orderController.js
+│   │   │   ├── paymentController.js
+│   │   │   ├── productController.js
+│   │   │   ├── questionController.js
+│   │   │   ├── recommendationController.js
+│   │   │   ├── returnController.js
+│   │   │   ├── reviewController.js
+│   │   │   ├── searchController.js
+│   │   │   ├── sellerController.js
+│   │   │   ├── uploadController.js
+│   │   │   ├── userController.js
+│   │   │   └── wishlistController.js
+│   │   ├── jobs
+│   │   │   ├── analyticsJob.js
+│   │   │   ├── cleanupJob.js
+│   │   │   ├── emailJob.js
+│   │   │   ├── inventoryJob.js
+│   │   │   ├── notificationJob.js
+│   │   │   ├── orderJob.js
+│   │   │   ├── queue.js
+│   │   │   └── reminderJob.js
+│   │   ├── middleware
+│   │   │   ├── admin.js
+│   │   │   ├── auth.js
+│   │   │   ├── cache.js
+│   │   │   ├── cors.js
+│   │   │   ├── errorHandler.js
+│   │   │   ├── logger.js
+│   │   │   ├── rateLimiter.js
+│   │   │   ├── sanitize.js
+│   │   │   ├── seller.js
+│   │   │   ├── upload.js
+│   │   │   ├── validator.js
+│   │   │   └── verifyEmail.js
+│   │   ├── models
+│   │   │   ├── Address.js
+│   │   │   ├── Answer.js
+│   │   │   ├── Banner.js
+│   │   │   ├── Brand.js
+│   │   │   ├── BrowsingHistory.js
+│   │   │   ├── Cart.js
+│   │   │   ├── Category.js
+│   │   │   ├── Chat.js
+│   │   │   ├── Coupon.js
+│   │   │   ├── Deal.js
+│   │   │   ├── Message.js
+│   │   │   ├── Notification.js
+│   │   │   ├── Order.js
+│   │   │   ├── Product.js
+│   │   │   ├── Question.js
+│   │   │   ├── Refund.js
+│   │   │   ├── Report.js
+│   │   │   ├── Return.js
+│   │   │   ├── Review.js
+│   │   │   ├── SearchHistory.js
+│   │   │   ├── Seller.js
+│   │   │   ├── Setting.js
+│   │   │   ├── Transaction.js
+│   │   │   ├── User.js
+│   │   │   └── Wishlist.js
+│   │   ├── routes
+│   │   │   ├── addressRoutes.js
+│   │   │   ├── adminRoutes.js
+│   │   │   ├── analyticsRoutes.js
+│   │   │   ├── authRoutes.js
+│   │   │   ├── bannerRoutes.js
+│   │   │   ├── brandRoutes.js
+│   │   │   ├── cartRoutes.js
+│   │   │   ├── categoryRoutes.js
+│   │   │   ├── chatRoutes.js
+│   │   │   ├── couponRoutes.js
+│   │   │   ├── dealRoutes.js
+│   │   │   ├── index.js
+│   │   │   ├── notificationRoutes.js
+│   │   │   ├── orderRoutes.js
+│   │   │   ├── paymentRoutes.js
+│   │   │   ├── productRoutes.js
+│   │   │   ├── questionRoutes.js
+│   │   │   ├── returnRoutes.js
+│   │   │   ├── reviewRoutes.js
+│   │   │   ├── searchRoutes.js
+│   │   │   ├── sellerRoutes.js
+│   │   │   ├── uploadRoutes.js
+│   │   │   ├── userRoutes.js
+│   │   │   └── wishlistRoutes.js
+│   │   ├── server.js
+│   │   ├── services
+│   │   │   ├── aiService.js
+│   │   │   ├── analyticsService.js
+│   │   │   ├── authService.js
+│   │   │   ├── cacheService.js
+│   │   │   ├── couponService.js
+│   │   │   ├── emailService.js
+│   │   │   ├── invoiceService.js
+│   │   │   ├── notificationService.js
+│   │   │   ├── orderService.js
+│   │   │   ├── paymentService.js
+│   │   │   ├── recommendationService.js
+│   │   │   ├── reviewService.js
+│   │   │   ├── searchService.js
+│   │   │   ├── shippingService.js
+│   │   │   ├── smsService.js
+│   │   │   ├── taxService.js
+│   │   │   └── uploadService.js
+│   │   ├── sockets
+│   │   │   ├── chatSocket.js
+│   │   │   ├── index.js
+│   │   │   ├── notificationSocket.js
+│   │   │   └── orderSocket.js
+│   │   ├── templates
+│   │   │   ├── newsletter.html
+│   │   │   ├── orderCancelled.html
+│   │   │   ├── orderConfirmation.html
+│   │   │   ├── orderDelivered.html
+│   │   │   ├── orderShipped.html
+│   │   │   ├── promotion.html
+│   │   │   ├── refundProcessed.html
+│   │   │   ├── resetPassword.html
+│   │   │   ├── verifyEmail.html
+│   │   │   └── welcome.html
+│   │   ├── utils
+│   │   │   ├── apiError.js
+│   │   │   ├── apiResponse.js
+│   │   │   ├── asyncHandler.js
+│   │   │   ├── constants.js
+│   │   │   ├── dateHelper.js
+│   │   │   ├── generateOTP.js
+│   │   │   ├── generateToken.js
+│   │   │   ├── hashPassword.js
+│   │   │   ├── helpers.js
+│   │   │   ├── logger.js
+│   │   │   ├── pagination.js
+│   │   │   ├── priceCalculator.js
+│   │   │   ├── slugify.js
+│   │   │   └── validators.js
+│   │   └── validators
+│   │       ├── addressValidator.js
+│   │       ├── authValidator.js
+│   │       ├── orderValidator.js
+│   │       ├── productValidator.js
+│   │       ├── reviewValidator.js
+│   │       └── userValidator.js
+│   ├── tests
+│   │   ├── e2e
+│   │   ├── integration
+│   │   │   └── api.test.js
+│   │   ├── setup.js
+│   │   └── unit
+│   │       ├── auth.test.js
+│   │       ├── order.test.js
+│   │       └── product.test.js
+│   └── uploads
+└── shared
+    ├── constants
+    │   ├── apiEndpoints.ts
+    │   ├── errorCodes.ts
+    │   └── index.ts
+    ├── package.json
+    ├── tsconfig.json
+    ├── types
+    │   ├── index.ts
+    │   ├── order.ts
+    │   ├── product.ts
+    │   └── user.ts
+    ├── utils
+    │   ├── formatters.ts
+    │   └── index.ts
+    └── validators
+        └── index.ts
+
+115 directories, 483 files

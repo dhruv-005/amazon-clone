@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund Processed</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #f6f6f6; font-family: 'Segoe UI', Arial, sans-serif; }
+    .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .header { background-color: #131921; padding: 20px; text-align: center; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 26px; }
+    .header h1 span { color: #ff9900; }
+    .content { padding: 30px; color: #333333; line-height: 1.6; }
+    .refund-card { background-color: #fcf8e3; border: 1px solid #faebcc; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }
+    .footer { background-color: #f3f3f3; padding: 20px; text-align: center; font-size: 12px; color: #777777; border-top: 1px solid #e7e7e7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>amazon<span>clone</span></h1>
+    </div>
+    <div class="content">
+      <h2>Your refund has been processed</h2>
+      <p>Hi {{name}},</p>
+      
+      <div class="refund-card">
+        <p style="margin: 0; font-size: 14px; color: #8a6d3b;">Refund Amount:</p>
+        <h2 style="color: #0f1111; margin: 5px 0;">{{refundAmount}}</h2>
+        <p style="margin: 0; font-size: 14px;">Order #{{orderNumber}}</p>
+      </div>
+
+      <p>The refund amount should reflect on your bank or credit card statement within 3 to 7 business days depending on your financial institution.</p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2025 Amazon Clone Inc. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

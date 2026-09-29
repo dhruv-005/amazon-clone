@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Offer - Amazon Clone</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #f6f6f6; font-family: 'Segoe UI', Arial, sans-serif; }
+    .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .header { background-color: #131921; padding: 20px; text-align: center; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 26px; }
+    .header h1 span { color: #ff9900; }
+    .promo-banner { background: linear-gradient(135deg, #ff9900, #ff5900); color: #ffffff; padding: 25px; text-align: center; }
+    .content { padding: 30px; color: #333333; line-height: 1.6; }
+    .coupon-code { display: inline-block; background: #fef08a; border: 2px dashed #ca8a04; color: #854d0e; font-size: 24px; font-weight: bold; letter-spacing: 4px; padding: 10px 24px; border-radius: 6px; margin: 15px 0; }
+    .button { display: inline-block; background-color: #ffd814; border: 1px solid #fcd200; border-radius: 8px; color: #0f1111; font-weight: bold; padding: 12px 32px; text-decoration: none; margin-top: 15px; }
+    .footer { background-color: #f3f3f3; padding: 20px; text-align: center; font-size: 12px; color: #777777; border-top: 1px solid #e7e7e7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>amazon<span>clone</span></h1>
+    </div>
+    <div class="promo-banner">
+      <h2 style="margin: 0; font-size: 26px;">{{promoTitle}}</h2>
+      <p style="margin: 5px 0 0 0; font-size: 16px;">{{promoSubtitle}}</p>
+    </div>
+    <div class="content" style="text-align: center;">
+      <p>Use the exclusive promo code below at checkout to claim your special discount:</p>
+      <div class="coupon-code">{{couponCode}}</div>
+      <p style="font-size: 13px; color: #666;">Offer valid until {{expiryDate}}.</p>
+      <a href="{{dealLink}}" class="button">Claim Offer Now</a>
+    </div>
+    <div class="footer">
+      <p>&copy; 2025 Amazon Clone Inc. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

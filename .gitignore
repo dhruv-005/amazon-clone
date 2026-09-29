@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Next.js Build Output
+.next/
+client/.next/
+out/
+build/
+dist/
+
+# Server Logs & Temp Uploads
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+uploads/*
+!uploads/.gitkeep
+
+# System & IDE files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
