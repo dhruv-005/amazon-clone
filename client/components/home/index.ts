@@ -1,0 +1,9 @@
+export { default as HeroBanner } from './HeroBanner';
+export { default as CategoryCards } from './CategoryCards';
+export { default as DealsCarousel } from './DealsCarousel';
+export { default as RecommendedProducts } from './RecommendedProducts';
+export { default as TrendingProducts } from './TrendingProducts';
+export { default as TopSellers } from './TopSellers';
+export { default as BrandShowcase } from './BrandShowcase';
+export { default as PrimeSection } from './PrimeSection';
+export { default as RecentlyViewed } from './RecentlyViewed';

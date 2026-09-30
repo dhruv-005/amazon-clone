@@ -8,7 +8,7 @@ dotenv.config();
 const config = {
   // Environment
   env: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 5000,
+  port: parseInt(process.env.PORT, 10) || 10000,
   clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
 
   // Database

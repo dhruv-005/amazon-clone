@@ -7,24 +7,31 @@ import config from './index.js';
 import logger from './logger.js';
 
 let redisClient = null;
+let isRedisDisabled = false;
 
 /**
  * Initialize Redis Connection
  */
 const connectRedis = () => {
+  if (!config.redis.url) {
+    if (!isRedisDisabled) {
+      logger.info('Redis URL is empty. Caching is disabled (In-Memory fallback active).');
+      isRedisDisabled = true;
+    }
+    return null;
+  }
+
   try {
     redisClient = new Redis(config.redis.url, {
-      maxRetriesPerRequest: 3,
+      maxRetriesPerRequest: 1,
       retryStrategy(times) {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-      reconnectOnError(err) {
-        const targetError = 'READONLY';
-        if (err.message.includes(targetError)) {
-          return true;
+        // Stop trying to reconnect if it fails once
+        if (times > 1) {
+          logger.warn('Redis connection failed. Falling back to In-Memory cache.');
+          isRedisDisabled = true;
+          return null;
         }
-        return false;
+        return 1000;
       },
       lazyConnect: true,
     });
@@ -34,20 +41,14 @@ const connectRedis = () => {
     });
 
     redisClient.on('error', (err) => {
-      logger.error(`❌ Redis Connection Error: ${err.message}`);
-    });
-
-    redisClient.on('close', () => {
-      logger.warn('Redis connection closed');
-    });
-
-    redisClient.on('reconnecting', () => {
-      logger.info('Redis reconnecting...');
+      logger.error(`❌ Redis Error: ${err.message}`);
+      isRedisDisabled = true;
     });
 
     return redisClient;
   } catch (error) {
     logger.error(`Redis initialization failed: ${error.message}`);
+    isRedisDisabled = true;
     return null;
   }
 };
@@ -56,6 +57,7 @@ const connectRedis = () => {
  * Get Redis Client Instance
  */
 export const getRedisClient = () => {
+  if (isRedisDisabled) return null;
   if (!redisClient) {
     connectRedis();
   }
@@ -64,10 +66,9 @@ export const getRedisClient = () => {
 
 /**
  * Cache Helper - Get cached data
- * @param {string} key - Cache key
- * @returns {any} Parsed cached data or null
  */
 export const getCache = async (key) => {
+  if (isRedisDisabled) return null;
   try {
     const client = getRedisClient();
     if (!client) return null;
@@ -75,48 +76,45 @@ export const getCache = async (key) => {
     const data = await client.get(key);
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    logger.error(`Redis GET error [${key}]: ${error.message}`);
     return null;
   }
 };
 
 /**
  * Cache Helper - Set cached data
- * @param {string} key - Cache key
- * @param {any} value - Data to cache
- * @param {number} ttl - Time to live in seconds (default: 1 hour)
  */
 export const setCache = async (key, value, ttl = 3600) => {
+  if (isRedisDisabled) return;
   try {
     const client = getRedisClient();
     if (!client) return;
 
     await client.setex(key, ttl, JSON.stringify(value));
   } catch (error) {
-    logger.error(`Redis SET error [${key}]: ${error.message}`);
+    // Silent fail
   }
 };
 
 /**
  * Cache Helper - Delete cached data
- * @param {string} key - Cache key
  */
 export const deleteCache = async (key) => {
+  if (isRedisDisabled) return;
   try {
     const client = getRedisClient();
     if (!client) return;
 
     await client.del(key);
   } catch (error) {
-    logger.error(`Redis DEL error [${key}]: ${error.message}`);
+    // Silent fail
   }
 };
 
 /**
  * Cache Helper - Delete by pattern
- * @param {string} pattern - Key pattern (e.g., "product:*")
  */
 export const deleteCacheByPattern = async (pattern) => {
+  if (isRedisDisabled) return;
   try {
     const client = getRedisClient();
     if (!client) return;
@@ -124,10 +122,9 @@ export const deleteCacheByPattern = async (pattern) => {
     const keys = await client.keys(pattern);
     if (keys.length > 0) {
       await client.del(...keys);
-      logger.info(`Deleted ${keys.length} cache keys matching: ${pattern}`);
     }
   } catch (error) {
-    logger.error(`Redis pattern delete error: ${error.message}`);
+    // Silent fail
   }
 };
 
@@ -138,10 +135,9 @@ export const closeRedis = async () => {
   try {
     if (redisClient) {
       await redisClient.quit();
-      logger.info('Redis connection closed');
     }
   } catch (error) {
-    logger.error(`Redis close error: ${error.message}`);
+    // Silent fail
   }
 };
 

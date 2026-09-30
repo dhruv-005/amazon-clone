@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '@/store/hooks';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
@@ -9,8 +9,14 @@ import Button from '../ui/Button';
 export const LocationSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [pincode, setPincode] = useState('');
+  const [mounted, setMounted] = useState(false);
+  
   const user = useAppSelector((state) => state.auth.user);
   const defaultAddr = user?.addresses?.find((a) => a.isDefault) || user?.addresses?.[0];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleApplyPincode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +36,10 @@ export const LocationSelector: React.FC = () => {
         </svg>
         <div className="flex flex-col">
           <span className="text-[11px] text-gray-300 font-normal">
-            Deliver to {user ? user.name.split(' ')[0] : 'India'}
+            Deliver to {mounted && user ? user.name.split(' ')[0] : 'India'}
           </span>
           <span className="text-xs font-bold text-white truncate max-w-[110px]">
-            {defaultAddr ? `${defaultAddr.city} ${defaultAddr.pincode}` : 'Select location'}
+            {mounted && defaultAddr ? `${defaultAddr.city} ${defaultAddr.pincode}` : 'Select location'}
           </span>
         </div>
       </button>
@@ -45,7 +51,7 @@ export const LocationSelector: React.FC = () => {
             Delivery options and delivery speeds may vary for different locations.
           </p>
 
-          {user && user.addresses?.length > 0 && (
+          {mounted && user && user.addresses?.length > 0 && (
             <div className="space-y-2">
               <span className="font-bold text-gray-800">Saved addresses:</span>
               <div className="space-y-1 max-h-36 overflow-y-auto">

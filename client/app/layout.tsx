@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ReduxProvider } from '@/store/provider';
-import ChatWidget from '@/components/common/ChatWidget';
-import ScrollToTop from '@/components/common/ScrollToTop';
 
 export const metadata: Metadata = {
   title: 'Online Shopping site in India: Shop Online for Mobiles, Books, Watches, Shoes and More - Amazon.in',
@@ -18,11 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-[#eaeded] antialiased">
-        <ReduxProvider>
-          {children}
-          <ChatWidget />
-          <ScrollToTop />
-        </ReduxProvider>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );
