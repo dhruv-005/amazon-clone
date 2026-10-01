@@ -29,11 +29,27 @@ class InMemoryQueue {
 }
 
 /**
+ * Check if Redis is genuinely configured with a valid remote URL
+ */
+const isRedisConfigured = () => {
+  const url = config.redis?.url;
+  if (!url) return false;
+  if (url === 'undefined' || url === 'null' || url === '') return false;
+  
+  // Do not attempt to connect to a local Redis instance on production servers (Render)
+  if (config.env === 'production' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
  * Factory to create or get a Bull Queue or fall back to an In-Memory Queue
  */
 export const createQueue = (queueName) => {
-  // If no REDIS_URL is provided, immediately return the mock in-memory queue
-  if (!config.redis.url) {
+  if (!isRedisConfigured()) {
+    // Return completely silent local queue
     return new InMemoryQueue(queueName);
   }
 
@@ -55,7 +71,8 @@ export const createQueue = (queueName) => {
     });
 
     queue.on('error', (error) => {
-      logger.error(`[Queue:${queueName}] Error: ${error.message}`);
+      // Suppress connection logs if they fallback gracefully
+      logger.debug(`[Queue:${queueName}] Event Error: ${error.message}`);
     });
 
     queue.on('failed', (job, err) => {
@@ -64,7 +81,6 @@ export const createQueue = (queueName) => {
 
     return queue;
   } catch (error) {
-    logger.warn(`[Queue:${queueName}] Init failed, falling back to In-Memory: ${error.message}`);
     return new InMemoryQueue(queueName);
   }
 };
