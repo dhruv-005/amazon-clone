@@ -1,8 +1,7 @@
 import logger from '../config/logger.js';
 import config from '../config/index.js';
-import Bull from 'bull';
 
-// Lightweight, completely silent in-memory queue implementation
+// In-Memory Queue (Runs background jobs safely without requiring external Redis)
 class InMemoryQueue {
   constructor(name) {
     this.name = name;
@@ -20,72 +19,54 @@ class InMemoryQueue {
         try {
           await handler({ data });
         } catch (err) {
-          logger.error(`[InMemoryQueue:${this.name}] Job error: ${err.message}`);
+          logger.error(`[Job:${this.name}] Handler error: ${err.message}`);
         }
       }
     }, delay);
-    return { id: `mock_${Date.now()}` };
+    return { id: `mem_${Date.now()}` };
   }
 }
 
-/**
- * Check if Redis is genuinely configured with a valid remote URL
- */
-const isRedisConfigured = () => {
-  const url = config.redis?.url;
-  if (!url) return false;
-  if (url === 'undefined' || url === 'null' || url === '') return false;
-  
-  // Do not attempt to connect to a local Redis instance on production servers (Render)
-  if (config.env === 'production' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
+const isValidRedisUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed === 'undefined' || trimmed === 'null') return false;
+  if (config.env === 'production' && (trimmed.includes('localhost') || trimmed.includes('127.0.0.1'))) {
     return false;
   }
-  
-  return true;
+  return trimmed.startsWith('redis://') || trimmed.startsWith('rediss://');
 };
 
-/**
- * Factory to create or get a Bull Queue or fall back to an In-Memory Queue
- */
 export const createQueue = (queueName) => {
-  if (!isRedisConfigured()) {
-    // Return completely silent local queue
+  const redisUrl = config.redis?.url;
+
+  if (!isValidRedisUrl(redisUrl)) {
+    // Always use in-memory queue when Redis URL is not configured
     return new InMemoryQueue(queueName);
   }
 
   try {
-    const queue = new Bull(queueName, config.redis.url, {
+    const Bull = require('bull');
+    const queue = new Bull(queueName, redisUrl, {
       redis: {
         maxRetriesPerRequest: null,
         enableReadyCheck: false,
       },
       defaultJobOptions: {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 5000,
-        },
+        attempts: 2,
         removeOnComplete: true,
-        removeOnFail: false,
+        removeOnFail: true,
       },
     });
 
-    queue.on('error', (error) => {
-      // Suppress connection logs if they fallback gracefully
-      logger.debug(`[Queue:${queueName}] Event Error: ${error.message}`);
-    });
-
-    queue.on('failed', (job, err) => {
-      logger.error(`[Queue:${queueName}] Job ${job?.id} failed: ${err.message}`);
-    });
-
+    queue.on('error', () => {});
     return queue;
   } catch (error) {
     return new InMemoryQueue(queueName);
   }
 };
 
-// Standard system queues
+// System Queues
 export const emailQueue = createQueue('email_queue');
 export const orderQueue = createQueue('order_queue');
 export const notificationQueue = createQueue('notification_queue');

@@ -31,7 +31,7 @@ const config = {
 
   // Redis
   redis: {
-    url: process.env.REDIS_URL || '',
+    url: process.env.REDIS_URL ? process.env.REDIS_URL.trim() : null,
   },
 
   // Stripe

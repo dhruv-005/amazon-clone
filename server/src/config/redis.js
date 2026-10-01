@@ -1,143 +1,98 @@
-// ============================================
-// REDIS CONFIGURATION - Caching & Session Store
-// ============================================
-
 import Redis from 'ioredis';
 import config from './index.js';
 import logger from './logger.js';
 
 let redisClient = null;
-let isRedisDisabled = false;
 
-/**
- * Initialize Redis Connection
- */
+const isValidRedisUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed === 'undefined' || trimmed === 'null') return false;
+  if (trimmed.includes('localhost') || trimmed.includes('127.0.0.1')) {
+    return config.env !== 'production';
+  }
+  return trimmed.startsWith('redis://') || trimmed.startsWith('rediss://');
+};
+
 const connectRedis = () => {
-  if (!config.redis.url) {
-    if (!isRedisDisabled) {
-      logger.info('Redis URL is empty. Caching is disabled (In-Memory fallback active).');
-      isRedisDisabled = true;
-    }
+  if (!isValidRedisUrl(config.redis?.url)) {
     return null;
   }
 
   try {
     redisClient = new Redis(config.redis.url, {
       maxRetriesPerRequest: 1,
+      enableReadyCheck: false,
+      lazyConnect: true,
       retryStrategy(times) {
-        // Stop trying to reconnect if it fails once
-        if (times > 1) {
-          logger.warn('Redis connection failed. Falling back to In-Memory cache.');
-          isRedisDisabled = true;
-          return null;
-        }
+        if (times > 1) return null; // stop reconnecting immediately
         return 1000;
       },
-      lazyConnect: true,
     });
 
     redisClient.on('connect', () => {
       logger.info('✅ Redis Connected Successfully');
     });
 
-    redisClient.on('error', (err) => {
-      logger.error(`❌ Redis Error: ${err.message}`);
-      isRedisDisabled = true;
+    redisClient.on('error', () => {
+      // suppress error spam
+      redisClient = null;
     });
 
     return redisClient;
   } catch (error) {
-    logger.error(`Redis initialization failed: ${error.message}`);
-    isRedisDisabled = true;
+    redisClient = null;
     return null;
   }
 };
 
-/**
- * Get Redis Client Instance
- */
-export const getRedisClient = () => {
-  if (isRedisDisabled) return null;
-  if (!redisClient) {
-    connectRedis();
-  }
-  return redisClient;
-};
+export const getRedisClient = () => redisClient;
 
-/**
- * Cache Helper - Get cached data
- */
 export const getCache = async (key) => {
-  if (isRedisDisabled) return null;
+  if (!redisClient) return null;
   try {
-    const client = getRedisClient();
-    if (!client) return null;
-
-    const data = await client.get(key);
+    const data = await redisClient.get(key);
     return data ? JSON.parse(data) : null;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
 
-/**
- * Cache Helper - Set cached data
- */
 export const setCache = async (key, value, ttl = 3600) => {
-  if (isRedisDisabled) return;
+  if (!redisClient) return;
   try {
-    const client = getRedisClient();
-    if (!client) return;
-
-    await client.setex(key, ttl, JSON.stringify(value));
-  } catch (error) {
-    // Silent fail
+    await redisClient.setex(key, ttl, JSON.stringify(value));
+  } catch {
+    // silent fallback
   }
 };
 
-/**
- * Cache Helper - Delete cached data
- */
 export const deleteCache = async (key) => {
-  if (isRedisDisabled) return;
+  if (!redisClient) return;
   try {
-    const client = getRedisClient();
-    if (!client) return;
-
-    await client.del(key);
-  } catch (error) {
-    // Silent fail
+    await redisClient.del(key);
+  } catch {
+    // silent fallback
   }
 };
 
-/**
- * Cache Helper - Delete by pattern
- */
 export const deleteCacheByPattern = async (pattern) => {
-  if (isRedisDisabled) return;
+  if (!redisClient) return;
   try {
-    const client = getRedisClient();
-    if (!client) return;
-
-    const keys = await client.keys(pattern);
+    const keys = await redisClient.keys(pattern);
     if (keys.length > 0) {
-      await client.del(...keys);
+      await redisClient.del(...keys);
     }
-  } catch (error) {
-    // Silent fail
+  } catch {
+    // silent fallback
   }
 };
 
-/**
- * Close Redis Connection
- */
 export const closeRedis = async () => {
-  try {
-    if (redisClient) {
+  if (redisClient) {
+    try {
       await redisClient.quit();
-    }
-  } catch (error) {
-    // Silent fail
+    } catch {}
   }
 };
 
