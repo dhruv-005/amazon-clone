@@ -28,8 +28,17 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   const handleSaveForLater = () => {
-    dispatch(addWishlistLocal(product));
+    if (product) {
+      dispatch(addWishlistLocal(product));
+    }
     dispatch(removeItemLocal(item._id));
+  };
+
+  const handleShare = () => {
+    if (typeof window !== 'undefined' && navigator?.clipboard && product?._id) {
+      navigator.clipboard.writeText(`${window.location.origin}/products/${product._id}`);
+      alert('Product link copied to clipboard!');
+    }
   };
 
   const price = product?.price?.current || 0;
@@ -135,12 +144,7 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
           <span className="text-gray-300">|</span>
 
           <button
-            onClick={() => {
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(`${window.location.origin}/products/${product?._id}`);
-                alert('Product link copied to clipboard!');
-              }
-            }}
+            onClick={handleShare}
             className="hover:text-[#c45500] hover:underline"
           >
             Share
