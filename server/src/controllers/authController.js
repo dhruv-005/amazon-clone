@@ -104,7 +104,7 @@ export const login = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/logout
 export const logout = asyncHandler(async (req, res) => {
   clearAuthCookies(res);
-  res.json(new ApiResponse(200, null, 'Logged out successfully'));
+  res.status(200).json(new ApiResponse(200, null, 'Logged out successfully'));
 });
 
 // @desc    Refresh token

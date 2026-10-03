@@ -11,7 +11,7 @@ import {
   resetPassword,
   changePassword,
 } from '../controllers/authController.js';
-import { authenticate, verifyRefreshToken } from '../middleware/auth.js';
+import { authenticate, optionalAuth, verifyRefreshToken } from '../middleware/auth.js';
 import {
   authLimiter,
   registerLimiter,
@@ -30,7 +30,9 @@ const router = Router();
 // Register & Login
 router.post('/register', registerLimiter, registerValidator, register);
 router.post('/login', authLimiter, loginValidator, login);
-router.post('/logout', authenticate, logout);
+
+// Logout (Uses optionalAuth so it always clears cookies even if token is expired)
+router.post('/logout', optionalAuth, logout);
 router.post('/refresh-token', verifyRefreshToken, refreshToken);
 
 // Current User
