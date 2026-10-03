@@ -1,5 +1,5 @@
 // ============================================
-// EMAIL CONFIGURATION - Nodemailer Transport
+// EMAIL CONFIGURATION - Nodemailer (Production Safe)
 // ============================================
 
 import nodemailer from 'nodemailer';
@@ -7,34 +7,42 @@ import config from './index.js';
 import logger from './logger.js';
 
 let transporter = null;
+let isEmailDisabled = false;
 
 /**
- * Initialize Email Transporter
+ * Initialize Email Transporter with Cloud Safe Settings
  */
 const initEmailTransporter = () => {
+  if (!config.email.user || !config.email.pass || config.email.user.includes('your_email')) {
+    logger.info('Email credentials not configured. Email service disabled.');
+    isEmailDisabled = true;
+    return null;
+  }
+
   try {
-    if (!config.email.user || !config.email.pass) {
-      logger.warn('⚠️  Email credentials not found. Email features disabled.');
-      return null;
-    }
+    const isPort465 = Number(config.email.port) === 465;
 
     transporter = nodemailer.createTransport({
-      host: config.email.host,
-      port: config.email.port,
-      secure: config.email.port === 465,
+      host: config.email.host || 'smtp.gmail.com',
+      port: Number(config.email.port) || 465,
+      secure: isPort465, // true for 465, false for other ports
       auth: {
         user: config.email.user,
         pass: config.email.pass,
       },
+      connectionTimeout: 4000, // 4s timeout (never hangs the server)
+      greetingTimeout: 4000,
+      socketTimeout: 5000,
       tls: {
         rejectUnauthorized: false,
       },
     });
 
-    // Verify connection
-    transporter.verify((error, success) => {
+    // Verify connection asynchronously without blocking server start
+    transporter.verify((error) => {
       if (error) {
-        logger.error(`Email transporter verification failed: ${error.message}`);
+        logger.warn(`Email server not reachable (${error.message}). Emails will be skipped.`);
+        isEmailDisabled = true;
       } else {
         logger.info('✅ Email Transporter Ready');
       }
@@ -42,7 +50,8 @@ const initEmailTransporter = () => {
 
     return transporter;
   } catch (error) {
-    logger.error(`Email transporter init error: ${error.message}`);
+    logger.warn(`Email transporter init failed: ${error.message}`);
+    isEmailDisabled = true;
     return null;
   }
 };
@@ -51,6 +60,7 @@ const initEmailTransporter = () => {
  * Get Email Transporter
  */
 export const getTransporter = () => {
+  if (isEmailDisabled) return null;
   if (!transporter) {
     initEmailTransporter();
   }
@@ -58,219 +68,85 @@ export const getTransporter = () => {
 };
 
 /**
- * Send Email
- * @param {object} options - Email options
- * @param {string} options.to - Recipient email
- * @param {string} options.subject - Email subject
- * @param {string} options.html - HTML content
- * @param {string} options.text - Plain text content
- * @param {array} options.attachments - Attachments array
- * @returns {object} Send result
+ * Send Email safely (never crashes or hangs the API)
  */
 export const sendEmail = async ({ to, subject, html, text, attachments = [] }) => {
+  if (isEmailDisabled) {
+    return { success: false, message: 'Email service inactive' };
+  }
+
   try {
     const emailTransporter = getTransporter();
     if (!emailTransporter) {
-      logger.warn(`Email not sent (no transporter): To ${to}, Subject: ${subject}`);
-      return { success: false, message: 'Email service not configured' };
+      return { success: false, message: 'No email transporter available' };
     }
 
     const mailOptions = {
-      from: `"Amazon Clone" <${config.email.from}>`,
+      from: `"Amazon Clone" <${config.email.from || config.email.user}>`,
       to,
       subject,
       html,
-      text: text || html.replace(/<[^>]*>/g, ''),
+      text: text || (html ? html.replace(/<[^>]*>/g, '') : ''),
       attachments,
     };
 
     const info = await emailTransporter.sendMail(mailOptions);
-    logger.info(`Email sent: ${info.messageId} to ${to}`);
-
-    return {
-      success: true,
-      messageId: info.messageId,
-    };
+    logger.info(`Email delivered to ${to} (${info.messageId})`);
+    return { success: true, messageId: info.messageId };
   } catch (error) {
-    logger.error(`Send email error: ${error.message}`);
-    return {
-      success: false,
-      error: error.message,
-    };
+    logger.warn(`Email delivery skipped to ${to}: ${error.message}`);
+    return { success: false, error: error.message };
   }
 };
 
-/**
- * Send Welcome Email
- */
 export const sendWelcomeEmail = async (to, name) => {
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #232f3e; padding: 20px; text-align: center;">
-        <h1 style="color: #ff9900; margin: 0;">amazon clone</h1>
-      </div>
-      <div style="padding: 30px; background: #ffffff;">
-        <h2 style="color: #232f3e;">Welcome to Amazon Clone, ${name}!</h2>
-        <p style="color: #555; line-height: 1.6;">
-          Thank you for creating an account. We're excited to have you on board!
-        </p>
-        <p style="color: #555; line-height: 1.6;">
-          Start exploring millions of products at unbeatable prices.
-        </p>
-        <a href="${config.clientUrl}" 
-           style="display: inline-block; background: #ff9900; color: #fff; 
-                  padding: 12px 30px; text-decoration: none; border-radius: 4px;
-                  font-weight: bold; margin-top: 15px;">
-          Start Shopping
-        </a>
-      </div>
-      <div style="background: #f5f5f5; padding: 15px; text-align: center; color: #999; font-size: 12px;">
-        <p>© ${new Date().getFullYear()} Amazon Clone. All rights reserved.</p>
-      </div>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px;">
+      <h2 style="color: #232f3e;">Welcome to Amazon Clone, ${name}!</h2>
+      <p>Thank you for creating your account. Start shopping millions of products today.</p>
     </div>
   `;
-
-  return sendEmail({
-    to,
-    subject: 'Welcome to Amazon Clone! 🎉',
-    html,
-  });
+  return sendEmail({ to, subject: 'Welcome to Amazon Clone! 🎉', html });
 };
 
-/**
- * Send OTP / Verification Email
- */
 export const sendVerificationEmail = async (to, name, otp) => {
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #232f3e; padding: 20px; text-align: center;">
-        <h1 style="color: #ff9900; margin: 0;">amazon clone</h1>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px;">
+      <h2 style="color: #232f3e;">Verify Your Email, ${name}</h2>
+      <p>Your One-Time Password (OTP) is:</p>
+      <div style="font-size: 28px; font-weight: bold; letter-spacing: 5px; color: #ff9900; padding: 15px; background: #f0f2f2; text-align: center;">
+        ${otp}
       </div>
-      <div style="padding: 30px; background: #ffffff;">
-        <h2 style="color: #232f3e;">Verify Your Email, ${name}</h2>
-        <p style="color: #555;">Use the following OTP to verify your email address:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; 
-                       color: #232f3e; background: #f0f0f0; padding: 15px 30px; 
-                       border-radius: 8px;">
-            ${otp}
-          </span>
-        </div>
-        <p style="color: #999; font-size: 13px;">
-          This OTP will expire in 10 minutes. Do not share it with anyone.
-        </p>
-      </div>
+      <p style="font-size: 12px; color: #888;">Valid for 10 minutes.</p>
     </div>
   `;
-
-  return sendEmail({
-    to,
-    subject: `Your Verification OTP: ${otp}`,
-    html,
-  });
+  return sendEmail({ to, subject: `Your Verification Code: ${otp}`, html });
 };
 
-/**
- * Send Password Reset Email
- */
 export const sendPasswordResetEmail = async (to, name, resetToken) => {
   const resetUrl = `${config.clientUrl}/reset-password?token=${resetToken}`;
-
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #232f3e; padding: 20px; text-align: center;">
-        <h1 style="color: #ff9900; margin: 0;">amazon clone</h1>
-      </div>
-      <div style="padding: 30px; background: #ffffff;">
-        <h2 style="color: #232f3e;">Reset Your Password</h2>
-        <p style="color: #555;">Hi ${name},</p>
-        <p style="color: #555;">
-          We received a request to reset your password. Click the button below:
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${resetUrl}" 
-             style="display: inline-block; background: #ff9900; color: #fff; 
-                    padding: 14px 40px; text-decoration: none; border-radius: 4px;
-                    font-weight: bold; font-size: 16px;">
-            Reset Password
-          </a>
-        </div>
-        <p style="color: #999; font-size: 13px;">
-          If you didn't request this, please ignore this email.
-          This link expires in 1 hour.
-        </p>
-      </div>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px;">
+      <h2 style="color: #232f3e;">Reset Your Password</h2>
+      <p>Click below to reset your password:</p>
+      <a href="${resetUrl}" style="display: inline-block; background: #ffd814; color: #000; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+        Reset Password
+      </a>
     </div>
   `;
-
-  return sendEmail({
-    to,
-    subject: 'Password Reset Request',
-    html,
-  });
+  return sendEmail({ to, subject: 'Password Reset Request', html });
 };
 
-/**
- * Send Order Confirmation Email
- */
 export const sendOrderConfirmationEmail = async (to, name, order) => {
-  const itemsHtml = order.items
-    .map(
-      (item) => `
-    <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">
-        <img src="${item.image}" alt="${item.title}" 
-             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
-      </td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.title}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-      <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">₹${item.price.toLocaleString()}</td>
-    </tr>
-  `
-    )
-    .join('');
-
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #232f3e; padding: 20px; text-align: center;">
-        <h1 style="color: #ff9900; margin: 0;">amazon clone</h1>
-      </div>
-      <div style="padding: 30px; background: #ffffff;">
-        <h2 style="color: #232f3e;">Order Confirmed! 🎉</h2>
-        <p style="color: #555;">Hi ${name},</p>
-        <p style="color: #555;">
-          Thank you for your order! Your order number is 
-          <strong style="color: #ff9900;">${order.orderNumber}</strong>
-        </p>
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-          <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 10px; text-align: left;">Item</th>
-              <th style="padding: 10px; text-align: left;">Product</th>
-              <th style="padding: 10px; text-align: center;">Qty</th>
-              <th style="padding: 10px; text-align: right;">Price</th>
-            </tr>
-          </thead>
-          <tbody>${itemsHtml}</tbody>
-        </table>
-        <div style="text-align: right; font-size: 18px; font-weight: bold; color: #232f3e;">
-          Total: ₹${order.pricing.total.toLocaleString()}
-        </div>
-        <a href="${config.clientUrl}/orders/${order._id}" 
-           style="display: inline-block; background: #ff9900; color: #fff; 
-                  padding: 12px 30px; text-decoration: none; border-radius: 4px;
-                  font-weight: bold; margin-top: 20px;">
-          Track Your Order
-        </a>
-      </div>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 20px;">
+      <h2 style="color: #067d62;">Order Confirmed: #${order.orderNumber}</h2>
+      <p>Hi ${name}, thank you for your order! It is now being prepared for delivery.</p>
+      <p><strong>Payment Mode:</strong> Cash on Delivery</p>
+      <p><strong>Total:</strong> ₹${order.pricing.total.toLocaleString('en-IN')}</p>
     </div>
   `;
-
-  return sendEmail({
-    to,
-    subject: `Order Confirmed - ${order.orderNumber}`,
-    html,
-  });
+  return sendEmail({ to, subject: `Order Confirmed - #${order.orderNumber}`, html });
 };
 
 export default initEmailTransporter;
